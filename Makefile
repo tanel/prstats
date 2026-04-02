@@ -4,6 +4,9 @@ build:
 run: build
 	./prstats $(ARGS) $(REPO)
 
+install:
+	go install .
+
 lint:
 	golangci-lint run
 
