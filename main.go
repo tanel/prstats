@@ -558,7 +558,7 @@ func fetchUser(login, token string) (*GitHubUser, error) {
 		return nil, err
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("GitHub API returned status %d", resp.StatusCode)
@@ -822,7 +822,7 @@ func fetchPendingReviews(owner, name, token string, teamLogins map[string]bool) 
 			return nil, err
 		}
 
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		if resp.StatusCode != http.StatusOK {
 			return nil, fmt.Errorf("GitHub GraphQL API returned status %d", resp.StatusCode)
@@ -1008,7 +1008,7 @@ func fetchPRs(owner, name, token string, since time.Time) ([]PullRequest, error)
 			return nil, err
 		}
 
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		if resp.StatusCode != http.StatusOK {
 			return nil, fmt.Errorf("GitHub GraphQL API returned status %d", resp.StatusCode)
