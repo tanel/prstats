@@ -397,7 +397,7 @@ func main() {
 		return si < sj
 	})
 
-	fmt.Printf("\nWho to request review from (start from the top):\n")
+	fmt.Printf("\nWho to request review from (pick devs with less load):\n")
 	for _, uc := range reviewCandidates {
 		fmt.Printf("  %s (review load: %d)\n", uc.display, uc.approvals+uc.pendingReviews)
 	}
