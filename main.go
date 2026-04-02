@@ -917,9 +917,10 @@ func fetchPendingReviews(owner, name, token string, teamLogins map[string]bool) 
 				}
 				toggles := []draftToggle{{node.CreatedAt, false}}
 				for _, item := range node.TimelineItems.Nodes {
-					if item.Typename == "ConvertToDraftEvent" {
+					switch item.Typename {
+					case "ConvertToDraftEvent":
 						toggles = append(toggles, draftToggle{item.CreatedAt, true})
-					} else if item.Typename == "ReadyForReviewEvent" {
+					case "ReadyForReviewEvent":
 						toggles = append(toggles, draftToggle{item.CreatedAt, false})
 					}
 				}
