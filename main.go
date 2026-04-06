@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -391,7 +392,10 @@ func main() {
 
 	reviewCandidates := make([]userCount, len(sorted))
 	copy(reviewCandidates, sorted)
-	sort.Slice(reviewCandidates, func(i, j int) bool {
+	rand.Shuffle(len(reviewCandidates), func(i, j int) {
+		reviewCandidates[i], reviewCandidates[j] = reviewCandidates[j], reviewCandidates[i]
+	})
+	sort.SliceStable(reviewCandidates, func(i, j int) bool {
 		si := reviewCandidates[i].approvals + reviewCandidates[i].pendingReviews
 		sj := reviewCandidates[j].approvals + reviewCandidates[j].pendingReviews
 		return si < sj
