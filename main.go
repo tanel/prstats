@@ -596,11 +596,6 @@ type graphQLResponse struct {
 							Name string `json:"name"`
 						} `json:"nodes"`
 					} `json:"labels"`
-					ReviewThreads struct {
-						Nodes []struct {
-							IsResolved bool `json:"isResolved"`
-						} `json:"nodes"`
-					} `json:"reviewThreads"`
 					Reviews struct {
 						Nodes []struct {
 							Author struct {
@@ -633,9 +628,7 @@ query($owner: String!, $name: String!, $after: String) {
         labels(first: 100) {
           nodes { name }
         }
-        reviewThreads(first: 100) {
-          nodes { isResolved }
-        }
+
         reviews(first: 100) {
           nodes {
             author { login }
@@ -664,9 +657,7 @@ query($owner: String!, $name: String!, $after: String) {
         labels(first: 100) {
           nodes { name }
         }
-        reviewThreads(first: 100) {
-          nodes { isResolved }
-        }
+
         reviewRequests(first: 100) {
           nodes {
             requestedReviewer {
@@ -728,11 +719,6 @@ type pendingReviewResponse struct {
 							Name string `json:"name"`
 						} `json:"nodes"`
 					} `json:"labels"`
-					ReviewThreads struct {
-						Nodes []struct {
-							IsResolved bool `json:"isResolved"`
-						} `json:"nodes"`
-					} `json:"reviewThreads"`
 					ReviewRequests struct {
 						Nodes []struct {
 							RequestedReviewer struct {
@@ -861,13 +847,6 @@ func fetchPendingReviews(owner, name, token string, teamLogins map[string]bool) 
 
 			if skipPR {
 				continue
-			}
-
-			for _, t := range node.ReviewThreads.Nodes {
-				if !t.IsResolved {
-					skipPR = true
-					break
-				}
 			}
 
 			if skipPR {
@@ -1050,13 +1029,6 @@ func fetchPRs(owner, name, token string, since time.Time) ([]PullRequest, error)
 
 			if skipPR {
 				continue
-			}
-
-			for _, t := range node.ReviewThreads.Nodes {
-				if !t.IsResolved {
-					skipPR = true
-					break
-				}
 			}
 
 			if skipPR {
