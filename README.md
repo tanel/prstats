@@ -22,7 +22,7 @@ Or build from source:
 ```
 git clone https://github.com/tanel/prstats
 cd prstats
-go build -o prstats .
+make install
 ```
 
 ## Requirements
@@ -36,6 +36,7 @@ export GITHUB_TOKEN=your_token
 ## Usage
 
 ```
+prstats
 prstats -repo owner/repo
 prstats -repo owner/repo -team backend
 prstats -repo owner/repo -since "2 weeks"
