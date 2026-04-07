@@ -853,10 +853,6 @@ func fetchPendingReviews(owner, name, token string, teamLogins map[string]bool) 
 				continue
 			}
 
-			if skipPR {
-				continue
-			}
-
 			result.openPRs[node.Author.Login]++
 
 			hasReadyForMerge := false
@@ -889,6 +885,23 @@ func fetchPendingReviews(owner, name, token string, teamLogins map[string]bool) 
 					result.pending[login]++
 					pendingReviewers = append(pendingReviewers, login)
 				}
+			}
+
+			hasTeamReviewer := false
+			for _, login := range pendingReviewers {
+				if teamLogins[login] {
+					hasTeamReviewer = true
+					break
+				}
+			}
+			for login := range approved {
+				if teamLogins[login] {
+					hasTeamReviewer = true
+					break
+				}
+			}
+			if !hasTeamReviewer {
+				continue
 			}
 
 			if !hasReadyForMerge && !hasChangesRequired {
