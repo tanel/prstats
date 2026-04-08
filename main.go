@@ -325,7 +325,13 @@ func main() {
 		return allPendingPRs[i].CreatedAt.Before(allPendingPRs[j].CreatedAt)
 	})
 
-	fmt.Printf("\nPRs waiting for review: %d\n", len(allPendingPRs))
+	waitingCount := 0
+	for _, pr := range allPendingPRs {
+		if len(pr.PendingReviewers) > 0 {
+			waitingCount++
+		}
+	}
+	fmt.Printf("\nPRs waiting for review: %d\n", waitingCount)
 	for _, pr := range allPendingPRs {
 		if len(pr.PendingReviewers) == 0 {
 			continue
@@ -346,7 +352,12 @@ func main() {
 
 	var blocked []ownerCount
 	for _, uc := range sorted {
-		prs := openPRURLs[uc.login]
+		var prs []openPR
+		for _, pr := range openPRURLs[uc.login] {
+			if len(pr.PendingReviewers) > 0 {
+				prs = append(prs, pr)
+			}
+		}
 		if len(prs) > 0 {
 			blocked = append(blocked, ownerCount{uc.display, len(prs), prs})
 		}
@@ -360,7 +371,12 @@ func main() {
 	for _, b := range blocked {
 		fmt.Printf("  %s (%d PRs)\n", b.name, b.count)
 		for _, pr := range b.prs {
-			fmt.Printf("    %s (%s)\n", pr.URL, formatAge(pr.CreatedAt))
+			var reviewerNames []string
+			for _, login := range pr.PendingReviewers {
+				reviewerNames = append(reviewerNames, displayName(login, token, cache))
+			}
+			sort.Strings(reviewerNames)
+			fmt.Printf("    %s (%s) - blocked by: %s\n", pr.URL, formatAge(pr.CreatedAt), strings.Join(reviewerNames, ", "))
 		}
 	}
 
